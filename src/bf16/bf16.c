@@ -7,7 +7,11 @@
 
 uint16_t bf16_from_f32(uint32_t f32bits)
 {
-    /* Inf and NaN keep their top half; rounding could turn a NaN into Inf. */
+    /*
+     * Inf and NaN keep their top half: rounding a NaN whose kept fraction bits
+     * are all ones would carry through the exponent into the sign
+     * (0x7FFFFFFF would give 0x8000, -0).
+     */
     if (((f32bits >> 23) & 0xFF) == 0xFF)
         return (uint16_t) (f32bits >> 16);
     /*
